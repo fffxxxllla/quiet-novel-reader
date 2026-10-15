@@ -10,6 +10,16 @@
 
 保留的 `run.bat` 已修复，可独立使用：优先打开打包应用，应用尚未构建时运行源码。桌面入口和脚本都以普通窗口启动。
 
+## 下载与安装
+
+下载安装包：https://github.com/fffxxxllla/quiet-novel-reader/releases/tag/v1.1.0 —— 双击安装，按向导完成后从桌面或开始菜单打开，无需另装 Python，也不需要手动保管运行库文件夹。免安装便携版：https://github.com/fffxxxllla/quiet-novel-reader/releases/tag/v1.0.0。支持 64 位 Windows 10（1809 及以上）和 Windows 11。
+
+当前安装包约 **123 MiB**，相比原便携目录约 **561 MiB** 减少约 **78%** 的传输体积。精简后的程序文件约 **436 MiB**，安装时另会生成少量卸载文件。
+
+安装包使用压缩后的程序文件，保留中文和英文网页语言资源，排除了调试资源及其他翻译。安装后的程序仍包含网页引擎，因此传输文件的体积小于安装后的占用。默认安装到当前用户的 `%LOCALAPPDATA%\Programs\QuietNovelReader`，可在向导中更改目录；从 Windows 的“已安装的应用”中卸载，书架和阅读记录会保留在 `%APPDATA%\QuietNovelReader`。
+
+安装包只包含应用程序，个人书架、书籍、浏览器 Cookie 和阅读记录不会包含在分享文件中。
+
 开发环境运行：
 
 ```powershell
@@ -37,11 +47,15 @@ python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements-build.txt
 powershell -ExecutionPolicy Bypass -File build_app.ps1
 powershell -ExecutionPolicy Bypass -File install_shortcuts.ps1
+powershell -ExecutionPolicy Bypass -File build_installer.ps1
+.venv\Scripts\python.exe packaging\verify_installer.py
 .venv\Scripts\python.exe -m unittest -v
 & '.\dist\静读\静读.exe' --self-check '.\.build\self-check.json'
 ```
 
 打包使用 [PyInstaller](https://pyinstaller.org/en/stable/operating-mode.html) 的文件夹形式，包含 Python 与 Qt 网页引擎运行组件；`.build` 保存构建中间文件，`dist\静读` 是交付应用。自检使用临时配置和本地 HTML，不修改实际书架，也不访问小说网站。
+
+安装包使用 [Inno Setup](https://jrsoftware.org/isdl.php) 和 LZMA2 压缩。`build_installer.ps1` 支持 `-CompilerPath` 指定 `ISCC.exe`，会先准备精简内容并执行应用自检，再生成 `releases` 中的安装包。`prepare_installer.py` 只处理 `.build\installer-payload`，原来的便携应用目录可继续使用。
 
 ## 网页提取方式
 

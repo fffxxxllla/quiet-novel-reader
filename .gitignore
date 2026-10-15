@@ -1,6 +1,7 @@
 ﻿.venv/
 .build/
 dist/
+releases/
 __pycache__/
 *.pyc
 .reader-test-*
